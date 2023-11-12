@@ -1,3 +1,4 @@
+
 local consoleTag = {"[\27[42;93m", "\27[0m]"}
 local consoleTagError = {"[\27[101;93m", "\27[0m]"}
 
@@ -19,7 +20,7 @@ function log(topic, msg, ...)
 	local tags = topic == 'e' and consoleTagError or consoleTag
 	if not msg then tags = {'', ''} end
 
-	local timestamp = arg['--dont-log-time'] and '' or os.date('%Y/%m/%d %H:%M:%S ')
+	local timestamp = arg and arg['--dont-log-time'] and '' or os.date('%Y/%m/%d %H:%M:%S ')
 
 	local s = table.concat{timestamp, tags[1], topic, tags[2], ''}
 	print(s, msg, ...)

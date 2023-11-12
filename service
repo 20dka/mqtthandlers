@@ -1,0 +1,14 @@
+[Unit]
+Description=ozi ozi ozi lua lua lua
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+StandardOutput=journal
+ExecStart=/usr/bin/lua5.1 /home/roland/ozi/mqtthandlers-master/main.lua
+WorkingDirectory=/home/roland/ozi/mqtthandlers-master
+
+[Install]
+WantedBy=multi-user.target
