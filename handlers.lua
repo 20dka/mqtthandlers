@@ -26,9 +26,8 @@ function M.load_handlers()
 end
 
 function M.sub_handlers()
-	fn = function(suback) log("mqtt", "subscribed to topic:", suback) end
-
 	for _, handler in ipairs(M.modules) do
+		local fn = function(suback) log("mqtt", "subscribed to topic:", handler.topic, suback) end
 		assert(client:subscribe{ topic=handler.topic, qos=0, callback=fn })
 	end
 end
