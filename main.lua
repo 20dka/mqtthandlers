@@ -6,10 +6,13 @@ events = require('timed_event')
 
 handlers = require('handlers')
 
+local host = _G.arg['--hostname'] or 'localhost'
+local clientid = _G.arg['--clientid'] or 'luabridge'
+
 -- mqtt
 client = mqtt.client{
-	uri = 'localhost',
-	id = 'luabridge',
+	uri = host,
+	id = clientid,
 	clean = true,
 	reconnect = true,
 }
