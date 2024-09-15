@@ -8,6 +8,10 @@ function M.add(name, timeout, poll, on_expire, data)
 	events[name] = {timeout=timeout, start=socket.gettime(), poll=poll, on_expire=on_expire, data=data}
 end
 
+function M.get(name)
+	return events[name]
+end
+
 function M.remove(name)
 	if events[name] then
 		events[name] = nil
