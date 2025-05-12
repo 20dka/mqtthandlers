@@ -1,19 +1,48 @@
 local tz = nil
 
-local function turn_on(brightness)
-	client:publish{ topic="zigbee2mqtt/bulb_bedroom_01/set", payload=json.encode{state ="ON", brightness = brightness}}
+local log_tag = 'switch_bedroom'
+
+local bulb1 = "zigbee2mqtt/bulb_bedroom_01/set"
+local bulb2 = "zigbee2mqtt/bulb_bedroom_02/set"
+
+local main_timer = 'bedroom_timer'
+local stage2_timer = 'nighttime_bedroom_stage2'
+
+local function turn_on_daytime()
+	events.remove(stage2_timer)
+
+	local p1 = json.encode{ color_temp = "warm" }
+	local p2 = json.encode{ brightness = 255, transition = 3 }
+	client:publish{ topic = bulb1, payload = p1 }
+	client:publish{ topic = bulb2, payload = p1 }
+
+	client:publish{ topic = bulb1, payload = p2 }
+	client:publish{ topic = bulb2, payload = p2 }
+end
+
+local function turn_on_nighttime()
+	client:publish{ topic = bulb1, payload = json.encode{ brightness = 10, transition = 3 } }
+	events.add(stage2_timer, 4, nil, function() 
+		client:publish{ topic = bulb1, payload = json.encode{ color = {rgb = "255,165,0"}, transition = 3 } }
+		log(log_tag, 'adjusting light temperature (nighttime)')
+	end)
+
+	client:publish{ topic = bulb2, payload = json.encode{ brightness = 0, transition = 3 } }
+	log(log_tag, 'turning down brightness')
 end
 
 local function turn_off()
-	client:publish{ topic="zigbee2mqtt/bulb_bedroom_01/set", payload=json.encode{state = "OFF"}}
+	events.remove(stage2_timer)
+
+	local payload = json.encode{ brightness = 0, transition = 2 }
+	client:publish{ topic = bulb1, payload = payload }
+	client:publish{ topic = bulb2, payload = payload }
 end
 
 local function timer_ran_out()
 	turn_off()
-	log('switch_bedroom', 'turning light off (timer ran out)')
+	log(log_tag, 'turning lights off (timer ran out)')
 end
-
-local BRIGHTNESS_DIM, BRIGHTNESS_FULL = 2, 254
 
 return {
 	topic = "zigbee2mqtt/switch_bedroom",
@@ -24,29 +53,29 @@ return {
 	on_match = function(payload)
 		local action = json.decode(payload).action
 		if action == 'on' then -- short press
-			local brightness = BRIGHTNESS_FULL
-
 			local hour = tz.date('*t', os.time(), 'Europe/Budapest').hour
 
-			if hour >= 23 or hour < 06 then
-				brightness = BRIGHTNESS_DIM
-				log('switch_bedroom', "it's dim")
+			log(log_tag, 'turning lights on (timed)')
+
+			if hour >= 22 or hour < 06 then
+				log(log_tag, "it's late")
+				turn_on_nighttime()
+			else
+				turn_on_daytime()
 			end
 
-			turn_on(brightness)
+			events.add(main_timer, 60*60*4, nil, timer_ran_out)
 
-			log('switch_bedroom', 'turning light on (timed)')
-
-			events.add('bedroom_timer', 60*60*4, nil, timer_ran_out)
 		elseif action == 'brightness_move_up' then -- long press
-			turn_on(BRIGHTNESS_FULL)
+			log(log_tag, 'turning lights on (bright)')
 
-			log('switch_bedroom', 'turning light on (bright)')
+			turn_on_daytime()
+
 		elseif action == 'off' then -- short press
+			log(log_tag, 'turning lights off (manual)')
 			turn_off()
-			log('switch_bedroom', 'turning light off (manual)')
 
-			events.remove('bedroom_timer')
+			events.remove(main_timer)
 		end
 	end
 }
