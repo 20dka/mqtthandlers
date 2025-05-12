@@ -1,9 +1,11 @@
+local bulb = "zigbee2mqtt/bathroom/light/bulb1/set"
+
 local function turn_on(brightness)
-	client:publish{ topic="zigbee2mqtt/bulb_bathroom/set", payload=json.encode{state ="ON", brightness = brightness}}
+	client:publish{ topic=bulb, payload=json.encode{state ="ON", brightness = brightness} }
 end
 
 local function turn_off()
-	client:publish{ topic="zigbee2mqtt/bulb_bathroom/set", payload=json.encode{state = "OFF"}}
+	client:publish{ topic=bulb, payload=json.encode{state = "OFF"} }
 end
 
 local function timer_ran_out()
@@ -14,8 +16,8 @@ end
 local BRIGHTNESS_DIM, BRIGHTNESS_FULL = 2, 254
 
 return {
-	topic = "zigbee2mqtt/switch_bathroom",
-	pattern = "zigbee2mqtt/switch_bathroom",
+	topic = "zigbee2mqtt/kitchen/switch/negygombos",
+	pattern = "zigbee2mqtt/kitchen/switch/negygombos",
 	on_match = function(payload)
 		local action = json.decode(payload).action
 		if action == 'on' then -- short press

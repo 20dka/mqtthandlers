@@ -18,8 +18,8 @@ local function set_outputs(outputs)
 end
 
 return {
-	topic = "zigbee2mqtt/switch_ozi_ketgombos",
-	pattern = "zigbee2mqtt/switch_ozi_ketgombos",
+	topic = "zigbee2mqtt/livingroom/switch/ozi_ketgombos",
+	pattern = "zigbee2mqtt/livingroom/switch/ozi_ketgombos",
 	on_match = function(payload)
 		local action = json.decode(payload).action
 		if action == 'on' then -- short press

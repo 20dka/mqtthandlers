@@ -1,16 +1,18 @@
+local bulb = "zigbee2mqtt/bathroom/light/bulb1/set"
+
 local function turn_on(brightness)
-	client:publish{ topic="zigbee2mqtt/bulb_bathroom/set", payload=json.encode{state ="ON", brightness = brightness}}
+	client:publish{ topic=bulb, payload=json.encode{state ="ON", brightness = brightness} }
 end
 
 local function turn_off()
-	client:publish{ topic="zigbee2mqtt/bulb_bathroom/set", payload=json.encode{state = "OFF"}}
+	client:publish{ topic=bulb, payload=json.encode{state = "OFF"} }
 end
 
 local BRIGHTNESS_DIM = 2
 
 return {
-	topic = "zigbee2mqtt/motion_bathroom",
-	pattern = "zigbee2mqtt/motion_bathroom",
+	topic = "zigbee2mqtt/bathroom/motion/primary",
+	pattern = "zigbee2mqtt/bathroom/motion/primary",
 	on_match = function(payload)
 		local occupied = json.decode(payload).occupancy
 		if occupied then
