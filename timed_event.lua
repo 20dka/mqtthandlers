@@ -21,6 +21,25 @@ function M.remove(name)
 	end
 end
 
+function M.extend(name, time)
+	if not events[name] then return nil end
+
+	local elapsed = socket.gettime() - events[name].start
+
+	local remaining = events[name].timeout - elapsed
+
+	local diff = time - remaining
+
+	print("elapsed", elapsed, "remaining", remaining, "diff", diff)
+
+	if diff > 0 then
+		events[name].timeout = events[name].timeout + diff
+		return true
+	end
+
+	return false
+end
+
 function M.poll()
 	for name, event in pairs(events) do
 		if (socket.gettime() - event.start < event.timeout) then
