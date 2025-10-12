@@ -1,0 +1,9 @@
+return {
+	topic = "zigbee2mqtt/room/type/+",
+	pattern = "zigbee2mqtt/room/type/(.+)",
+	on_match = function(payload, name)
+		local data = json.decode(payload)
+		
+		log("template", "sensor", name, "has data", data.value)
+	end
+}
