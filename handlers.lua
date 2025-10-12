@@ -27,18 +27,35 @@ end
 
 function M.sub_handlers()
 	for _, handler in ipairs(M.modules) do
-		local fn = function(suback) log("mqtt", "subscribed to topic:", handler.topic, suback) end
-		assert(client:subscribe{ topic=handler.topic, qos=0, callback=fn })
+		if type(handler.topic) == "string" then
+			local fn = function(suback) log("mqtt", "subscribed to topic:", handler.topic, suback) end
+			assert(client:subscribe{ topic=handler.topic, qos=0, callback=fn })
+		elseif type(handler.topic) == "table" then
+			for _, topic in ipairs(handler.topic) do
+				local fn = function(suback) log("mqtt", "subscribed to topic:", topic, suback) end
+				assert(client:subscribe{ topic=topic, qos=0, callback=fn })
+			end
+		end
 	end
 end
 
 function M.parse_msg(msg)
-	for _, handler in ipairs(M.modules) do
-		if string.match(msg.topic, handler.pattern) then
-			log('handler','executing match for pattern', handler.pattern, 'in module', handler.__name)
-			local status, err = pcall(handler.on_match, msg.payload, string.match(msg.topic, handler.pattern))
+	local exec = function (handler, str)
+		if string.match(msg.topic, str) then
+			log('handler','executing match for pattern', str, 'in module', handler.__name)
+			local status, err = pcall(handler.on_match, msg.payload, string.match(msg.topic, str))
 			if not status then
 				log('e', 'error executing handler:', err)
+			end
+		end
+	end
+
+	for _, handler in ipairs(M.modules) do
+		if type(handler.pattern) == "string" then
+			exec(handler, handler.pattern)
+		elseif type(handler.pattern) == "table" then
+			for _, pattern in ipairs(handler.pattern) do
+				exec(handler, pattern)
 			end
 		end
 	end
