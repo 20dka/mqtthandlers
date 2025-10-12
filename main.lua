@@ -6,6 +6,8 @@ events = require('timed_event')
 
 handlers = require('handlers')
 
+routines = require('routines')
+
 local host = _G.arg['--hostname'] or 'localhost'
 local clientid = _G.arg['--clientid'] or 'luabridge'
 
@@ -39,4 +41,4 @@ client:on{
 }
 
 
-mqtt.run_ioloop(client, events.poll)
+mqtt.run_ioloop(client, events.poll, routines.tick)
