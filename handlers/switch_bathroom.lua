@@ -20,16 +20,16 @@ return {
 	pattern = "zigbee2mqtt/kitchen/switch/negygombos",
 	on_match = function(payload)
 		local action = json.decode(payload).action
-		if action == 'on' then -- short press
+		if action == 'brightness_move_up' then -- long press
 			turn_on(BRIGHTNESS_DIM)
 
 			log('switch_bathroom', 'turning light on (dim) (timed)')
 
 			events.add('bathroom_timer', 60*30, nil, timer_ran_out)
-		elseif action == 'brightness_move_up' then -- long press
+		elseif action == 'on' then -- short press
 			turn_on(BRIGHTNESS_FULL)
 
-			log('switch_bathroom', 'turning light on (bright)')
+			log('switch_bathroom', 'turning light on (bright) (timed)')
 
 			events.add('bathroom_timer', 60*30, nil, timer_ran_out)
 		elseif action == 'off' then -- short press
