@@ -7,13 +7,22 @@ local bulb2 = "zigbee2mqtt/bedroom/light/bulb2/set"
 
 local main_timer = 'bedroom_timer'
 
+local function gethour()
+	return tz.date('*t', os.time(), 'Europe/Budapest').hour
+end
+
 local function turn_on_daytime()
-	local p1 = json.encode{ color_temp = "warm", transition = 0.05 }
-	local p2 = json.encode{ brightness = 255, transition = 3 }
+	local hour = gethour()
+
+	local color = hour > 18 and "warm" or "neutral"
+
+	local p1 = json.encode{ color_temp = color, transition = 0.2 }
+	local p2 = json.encode{ brightness = 255, transition = 2 }
+
 	client:publish{ topic = bulb1, payload = p1 }
 	client:publish{ topic = bulb2, payload = p1 }
 
-	routines.sleep(0.2)
+	routines.sleep(0.3)
 
 	client:publish{ topic = bulb1, payload = p2 }
 	client:publish{ topic = bulb2, payload = p2 }
@@ -31,9 +40,21 @@ local function turn_on_nighttime()
 end
 
 local function turn_off()
-	local payload = json.encode{ brightness = 0, transition = 2 }
-	client:publish{ topic = bulb1, payload = payload }
-	client:publish{ topic = bulb2, payload = payload }
+	local p1 = json.encode{ brightness = 0, transition = 2 }
+	local p2 = json.encode{ brightness = 0 }
+
+	client:publish{ topic = bulb1, payload = p1 }
+	client:publish{ topic = bulb2, payload = p1 }
+
+	routines.sleep(2.2)
+
+	client:publish{ topic = bulb1, payload = p2 }
+	client:publish{ topic = bulb2, payload = p2 }
+
+	routines.sleep(0.2)
+
+	client:publish{ topic = bulb1, payload = p2 }
+	client:publish{ topic = bulb2, payload = p2 }
 end
 
 local function timer_ran_out()
@@ -50,7 +71,7 @@ return {
 	on_match = function(payload, switch_name)
 		local action = json.decode(payload).action
 		if action == 'on' then -- short press
-			local hour = tz.date('*t', os.time(), 'Europe/Budapest').hour
+			local hour = gethour()
 
 			log(log_tag, 'turning lights on (timed)', switch_name)
 
@@ -70,7 +91,7 @@ return {
 
 		elseif action == 'off' then -- short press
 			log(log_tag, 'turning lights off (manual)', switch_name)
-			turn_off()
+			routines.register(turn_off)
 
 			events.remove(main_timer)
 		end
