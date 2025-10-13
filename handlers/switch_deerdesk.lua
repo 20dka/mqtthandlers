@@ -30,6 +30,10 @@ return {
 			set_outputs{ {ID = 2, Action = actions.short_off } }
 
 			log(log_tag, 'power cycling monitor')
+		elseif action == 'brightness_move_up' then -- long press
+			set_outputs{ {ID = 1, Action = actions.toggle } }
+
+			log(log_tag, 'toggling PC power')
 		end
 	end
 }
