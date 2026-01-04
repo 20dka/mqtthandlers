@@ -2,8 +2,8 @@ local tz = nil
 
 local log_tag = 'switch_bedroom'
 
-local bulb1 = "zigbee2mqtt/bedroom/light/bulb1/set"
-local bulb2 = "zigbee2mqtt/bedroom/light/bulb2/set"
+local bulb1 = "zigbee2mqtt/bedroom/light/bulb2/set"
+local bulb2 = "zigbee2mqtt/bedroom/light/bulbx/set"
 
 local main_timer = 'bedroom_timer'
 
