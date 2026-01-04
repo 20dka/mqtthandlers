@@ -1,0 +1,17 @@
+_G.zigbeestate = {}
+
+return {
+	topic = "zigbee2mqtt/+/+/+",
+	pattern = "zigbee2mqtt/(.+)/(.+)/(.+)",
+	on_match = function(payload, room, type, name)
+		local data = json.decode(payload)
+
+		local path = string.format("%s/%s/%s", room, type, name)
+		_G.zigbeestate[path] = {
+			data = data,
+			time = os.time()
+		}
+
+		log("zigbeestate", string.format("device '%s' in room '%s' of type '%s' data received", name, room, type))
+	end
+}
