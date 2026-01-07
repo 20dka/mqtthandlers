@@ -42,7 +42,7 @@ end
 function M.parse_msg(msg)
 	local exec = function (handler, str)
 		if string.match(msg.topic, str) then
-			log('handler','executing match for pattern', str, 'in module', handler.__name)
+--			log('handler','executing match for pattern', str, 'in module', handler.__name)
 			local status, err = pcall(handler.on_match, msg.payload, string.match(msg.topic, str))
 			if not status then
 				log('e', 'error executing handler:', err)
