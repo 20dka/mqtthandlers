@@ -6,15 +6,14 @@ local routines = {}
 
 function M.register(fn, name, ...)
 	local co = coroutine.create(fn)
+
 	if name then
 		routines[name] = co
-
-		if ... then
-			coroutine.resume(co, ...)
-		end
 	else
 		table.insert(routines, co)
 	end
+
+	coroutine.resume(co, ...)
 end
 
 function M.remove(name)
