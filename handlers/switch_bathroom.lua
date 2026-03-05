@@ -16,8 +16,8 @@ end
 local BRIGHTNESS_DIM, BRIGHTNESS_FULL = 2, 254
 
 return {
-	topic = "zigbee2mqtt/kitchen/switch/negygombos",
-	pattern = "zigbee2mqtt/kitchen/switch/negygombos",
+	topic = "zigbee2mqtt/bathroom/switch/primary",
+	pattern = "zigbee2mqtt/bathroom/switch/primary",
 	on_match = function(payload)
 		local action = json.decode(payload).action
 		if action == 'brightness_move_up' then -- long press
