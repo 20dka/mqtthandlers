@@ -28,28 +28,35 @@ return {
 	on_init = function()
 		socket = require('socket')
 	end,
-	topic = "zigbee2mqtt/kitchen/switch/negygombos",
-	pattern = "zigbee2mqtt/kitchen/switch/negygombos",
-	on_match = function(payload)
-		local dir, action = string.match(json.decode(payload).action, "arrow_(%a+)_(%a+)")
+	topic = "zigbee2mqtt/kitchen/switch/+",
+	pattern = "zigbee2mqtt/kitchen/switch/(.+)",
+	on_match = function(payload, switch_name)
+		local action = json.decode(payload).action
+		local brightness_dir = string.match(action, "brightness_move_(%a+)")
 
-		if action == 'click' then -- short press (either side)
-			turn_on('T') -- toggle
-
-			log('switch_kitchen', 'toggling strip (timed)')
+		if action == 'on' then
+			turn_on()
+			log('switch_kitchen', 'turning ON strip (timed)')
 
 			events.add(strip_timer, 60*60*4, nil, timer_ran_out)
-		elseif action == 'hold' then
+
+		elseif action == 'off' then
+			turn_off()
+			log('switch_kitchen', 'turning OFF strip (timed)')
+
+			events.remove(strip_timer)
+
+		elseif brightness_dir then
 			dim_last = socket.gettime()
-			dim_direction = dir == 'left'
-			events.add(strip_dim_timer, 20, timer_dim, nil)
+			dim_direction = brightness_dir == 'down'
+			events.add(strip_dim_timer, 5, timer_dim, nil)
 
 			log('switch_kitchen', 'beginning kitchen lights dimming, going', dim_direction and 'down' or 'up')
 
-		elseif action == 'release' then
+		elseif action == 'brightness_stop' then
 			events.remove(strip_dim_timer)
 
-			log('switch_kitchen', 'removing dimming timer')
+			log('switch_kitchen', 'removing lights dimming timer')
 		end
 	end
 }
