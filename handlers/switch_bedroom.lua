@@ -38,7 +38,7 @@ local function turn_on_daytime()
 
 	client:publish{ topic = bulb1, payload = p2 }
 
-	routines.sleep(2.2)
+	stage_id = 3
 
 	events.add(main_timer, 60*60*4, nil, timer_ran_out)
 end
@@ -97,6 +97,8 @@ local function turn_off()
 
 	routines.sleep(0.2)
 
+	stage_id = 1
+
 	client:publish{ topic = bulb1, payload = p2 }
 end
 
@@ -150,7 +152,7 @@ return {
 		local action = json.decode(payload).action
 		local hour = gethour()
 
-		if hour >= 23 or hour < 07 then
+		if hour >= 22 or hour < 07 then
 			log(log_tag, "it's late")
 
 			handle_late_statemachine(action == 'on')
