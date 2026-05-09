@@ -33,10 +33,7 @@ function M.tick()
 end
 
 function M.sleep(s)
-	local start = socket.gettime()
-	while socket.gettime() < (start + s) do
-		coroutine.yield()
-	end
+	copas.sleep(s)
 end
 
 function M.zigbeeData(path, timeout)

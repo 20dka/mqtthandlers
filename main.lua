@@ -1,5 +1,7 @@
 require('utils')
 
+copas = require('copas')
+
 local mqtt = require('mqtt')
 
 events = require('timed_event')
@@ -16,7 +18,7 @@ client = mqtt.client{
 	uri = host,
 	id = clientid,
 	clean = true,
-	reconnect = true,
+	connector = require('mqtt.luasocket-copas'),
 }
 
 handlers.load_handlers()
@@ -40,5 +42,25 @@ client:on{
 	error = function(err) log('e', "MQTT client error:", err) end,
 }
 
+copas.addnamedthread("MQTT_thread", function()
+	log('MQTT', 'Starting client thread...')
 
-mqtt.run_ioloop(client, events.poll, routines.tick)
+	while true do -- to enable reconnecting
+		mqtt.run_sync(client)
+	end
+end)
+
+copas.addthread(function()
+	while true do
+		events.poll()
+		copas.pause()
+	end
+end)
+copas.addthread(function()
+	while true do
+		routines.tick()
+		copas.pause()
+	end
+end)
+
+copas.loop()
