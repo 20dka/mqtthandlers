@@ -18,14 +18,14 @@ return {
 		if occupied then
 			if not events.get("bathroom_timer") then
 				turn_on(BRIGHTNESS_DIM)
-				log('motion_bathroom', 'turning light on (dim) (timed)')
+				log('i', 'motion_bathroom', 'turning light on (dim) (timed)')
 
 				events.add('bathroom_timer', 60*20, nil, function()
 					turn_off()
-					log('motion_bathroom', 'turning light off (timer ran out)')
+					log('i', 'motion_bathroom', 'turning light off (timer ran out)')
 				end)
 			elseif events.extend("bathroom_timer", 60*20) then
-				log('motion_bathroom', 'extending light')
+				log('i', 'motion_bathroom', 'extending light')
 			end
 		end
 	end

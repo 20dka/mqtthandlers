@@ -1,11 +1,12 @@
-
 local consoleTag = {"[\27[42;93m", "\27[0m]"}
 local consoleTagError = {"[\27[101;93m", "\27[0m]"}
 
 json = require('json')
 lfs = require('lfs')
+log = require('log')
 
 do -- turn arguments into hashmap
+	_G.arg = _G.arg or {}
 	for k, v in ipairs(_G.arg) do
 		local name, val = string.match(v, '(.+)%=(.+)')
 		if val then
@@ -16,22 +17,17 @@ do -- turn arguments into hashmap
 	end
 end
 
-function log(topic, msg, ...)
-	local tags = topic == 'e' and consoleTagError or consoleTag
-	if not msg then tags = {'', ''} end
-
-	local timestamp = arg and arg['--dont-log-time'] and '' or os.date('%Y/%m/%d %H:%M:%S ')
-
-	local s = table.concat{timestamp, tags[1], topic, tags[2], ''}
-	print(s, msg, ...)
-end
 
 function dump(t, header)
 	if header then
-		log(header)
+		print('dump', header)
 	end
 	for k, v in pairs(t) do
-		print(k, v)
+		if type(v) == 'table' then
+			dump(v, k)
+		else
+			print(k, v)
+		end
 	end
 end
 

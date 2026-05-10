@@ -26,7 +26,7 @@ function M.tick()
 			coroutine.resume(routine)
 		end
 		if coroutine.status(routine) == "dead" then
-			print("routine dead", name)
+			--print("routine dead", name)
 			routines[name] = nil
 		end
 	end

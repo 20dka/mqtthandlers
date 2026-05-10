@@ -12,7 +12,7 @@ end
 
 local function timer_ran_out()
 	turn_off()
-	log('switch_kitchen', 'turning light strip off (timer ran out)')
+	log('i', 'switch_kitchen', 'turning light strip off (timer ran out)')
 end
 
 local function timer_dim()
@@ -36,13 +36,13 @@ return {
 
 		if action == 'on' then
 			turn_on()
-			log('switch_kitchen', 'turning ON strip (timed)')
+			log('i', 'switch_kitchen', 'turning ON strip (timed)')
 
 			events.add(strip_timer, 60*60*4, nil, timer_ran_out)
 
 		elseif action == 'off' then
 			turn_off()
-			log('switch_kitchen', 'turning OFF strip (timed)')
+			log('i', 'switch_kitchen', 'turning OFF strip (timed)')
 
 			events.remove(strip_timer)
 
@@ -51,12 +51,12 @@ return {
 			dim_direction = brightness_dir == 'down'
 			events.add(strip_dim_timer, 5, timer_dim, nil)
 
-			log('switch_kitchen', 'beginning kitchen lights dimming, going', dim_direction and 'down' or 'up')
+			log('i', 'switch_kitchen', 'beginning kitchen lights dimming, going', dim_direction and 'down' or 'up')
 
 		elseif action == 'brightness_stop' then
 			events.remove(strip_dim_timer)
 
-			log('switch_kitchen', 'removing lights dimming timer')
+			log('i', 'switch_kitchen', 'removing lights dimming timer')
 		end
 	end
 }

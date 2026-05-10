@@ -25,15 +25,15 @@ return {
 		if action == 'on' then -- short press
 			set_outputs{ {ID = 2, Action = actions.toggle } }
 
-			log(log_tag, 'toggling power for monitor')
+			log('i', log_tag, 'toggling power for monitor')
 		elseif action == 'off' then -- short press
 			set_outputs{ {ID = 2, Action = actions.short_off } }
 
-			log(log_tag, 'power cycling monitor')
+			log('i', log_tag, 'power cycling monitor')
 		elseif action == 'brightness_move_up' then -- long press
 			set_outputs{ {ID = 1, Action = actions.toggle } }
 
-			log(log_tag, 'toggling PC power')
+			log('i', log_tag, 'toggling PC power')
 		end
 	end
 }

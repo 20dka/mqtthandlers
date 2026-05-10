@@ -26,10 +26,11 @@ handlers.load_handlers()
 client:on{
 	connect = function(connack)
 		if connack.rc ~= 0 then
-			log('e', "mqtt connection to broker failed:", connack:reason_string(), connack)
+			log('e', 'MQTT', 'MQTT connection to broker failed:', connack:reason_string(), connack)
 			return
+		else
+			log('i', 'MQTT', 'connected!')
 		end
-		log("mqtt", "connected:", connack) -- successful connection
 
 		handlers.sub_handlers()
 	end,
@@ -39,11 +40,11 @@ client:on{
 		handlers.parse_msg(msg)
 	end,
 
-	error = function(err) log('e', "MQTT client error:", err) end,
+	error = function(err) log('e', 'MQTT', 'client error:', err) end,
 }
 
 copas.addnamedthread("MQTT_thread", function()
-	log('MQTT', 'Starting client thread...')
+	log('d', 'MQTT', 'Starting client thread...')
 
 	while true do -- to enable reconnecting
 		mqtt.run_sync(client)
@@ -56,6 +57,7 @@ copas.addthread(function()
 		copas.pause()
 	end
 end)
+
 copas.addthread(function()
 	while true do
 		routines.tick()

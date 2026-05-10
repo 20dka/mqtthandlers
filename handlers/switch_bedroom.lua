@@ -104,7 +104,7 @@ end
 
 local function timer_ran_out()
 	turn_off()
-	log(log_tag, 'turning lights off (timer ran out)')
+	log('i', log_tag, 'turning lights off (timer ran out)')
 end
 
 stage_actions = {
@@ -119,7 +119,7 @@ local function handle_late_statemachine(going_up)
 	local new_stage = nil
 	if going_up then
 		if stage_id < #stages then
-			log(log_tag, 'going from stage', stages[stage_id], 'to', stages[stage_id+1])
+			log('d', log_tag, 'going from stage', stages[stage_id], 'to', stages[stage_id+1])
 			stage_id = stage_id+1
 			new_stage = stages[stage_id]
 		else
@@ -128,7 +128,7 @@ local function handle_late_statemachine(going_up)
 		end
 	else
 		if stage_id > 1 then
-			log(log_tag, 'going from stage', stages[stage_id], 'to', stages[stage_id-1])
+			log('d', log_tag, 'going from stage', stages[stage_id], 'to', stages[stage_id-1])
 			stage_id = stage_id-1
 			new_stage = stages[stage_id]
 		else
@@ -153,19 +153,19 @@ return {
 		local hour = gethour()
 
 		if hour >= 22 or hour < 07 then
-			log(log_tag, "it's late")
+			log('d', log_tag, "it's late")
 
 			handle_late_statemachine(action == 'on')
 
 		else
 			if action == 'on' then -- short press UP
 
-				log(log_tag, 'turning lights on (timed)', switch_name)
+				log('i', log_tag, 'turning lights on (timed)', switch_name)
 				routines.register(turn_on_daytime)
 
 			elseif action == 'off' then -- short press DOWN
 
-				log(log_tag, 'turning lights off (manual)', switch_name)
+				log('i', log_tag, 'turning lights off (manual)', switch_name)
 				routines.register(turn_off)
 
 				events.remove(main_timer)
@@ -174,14 +174,14 @@ return {
 
 
 		if action == 'brightness_move_up' then -- long press
-			log(log_tag, 'turning lights on (bright)', switch_name)
+			log('i', log_tag, 'turning lights on (bright)', switch_name)
 
 			routines.register(turn_on_daytime)
 
 		elseif action == 'brightness_move_down' then -- long press
-			log(log_tag, 'turning lights on (bright)', switch_name)
+			log('i', log_tag, 'turning lights off (bright)', switch_name)
 
-			routines.register(turn_on_daytime)
+			routines.register(turn_off)
 
 		end
 	end

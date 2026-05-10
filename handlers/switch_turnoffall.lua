@@ -14,7 +14,7 @@ return {
 		local action = json.decode(payload).action
 		if action == 'brightness_move_down' then -- long press
 			turn_off()
-			log('switch_turnoffall', 'turning off all lights (manual)')
+			log('i', 'switch_turnoffall', 'turning off all lights (manual)')
 
 			events.remove('bathroom_timer')
 			events.remove('bedroom_timer')

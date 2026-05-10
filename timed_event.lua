@@ -30,7 +30,7 @@ function M.extend(name, time)
 
 	local diff = time - remaining
 
-	print("elapsed", elapsed, "remaining", remaining, "diff", diff)
+	--print("elapsed", elapsed, "remaining", remaining, "diff", diff)
 
 	if diff > 0 then
 		events[name].timeout = events[name].timeout + diff
