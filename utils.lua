@@ -7,6 +7,7 @@ json = require('json')
 lfs = require('lfs')
 log = require('log')
 socket = require('socket')
+query = require('query')
 
 do -- turn arguments into hashmap
 	_G.arg = _G.arg or {}
@@ -61,4 +62,19 @@ local accents = {
 
 function deaccentize(s)
 	return (string.gsub(s, '(%a+)', accents))
+end
+
+function future_timeout(future, timeout)
+	local start = socket.gettime()
+	while socket.gettime() < (start + timeout) and not future:try() do
+		copas.pause(0)
+	end
+
+	local status, res = future:try()
+	if future:cancel() or status == 'error' then
+		log('e', 'future_timeout', 'future errored or timed out')
+		return nil, res
+	else
+		return res
+	end
 end
