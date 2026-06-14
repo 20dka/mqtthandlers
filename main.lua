@@ -10,6 +10,8 @@ handlers = require('handlers')
 
 routines = require('routines')
 
+telegram = require('telegram')
+
 local host = _G.arg['--hostname'] or 'localhost'
 local clientid = _G.arg['--clientid'] or 'luabridge'
 
@@ -22,6 +24,8 @@ client = mqtt.client{
 }
 
 handlers.load_handlers()
+
+telegram.setup()
 
 client:on{
 	connect = function(connack)
@@ -48,6 +52,7 @@ copas.addnamedthread("MQTT_thread", function()
 
 	while true do -- to enable reconnecting
 		mqtt.run_sync(client)
+		log('w', 'MQTT', 'reconnecting client...')
 	end
 end)
 

@@ -1,6 +1,8 @@
 local consoleTag = {"[\27[42;93m", "\27[0m]"}
 local consoleTagError = {"[\27[101;93m", "\27[0m]"}
 
+config = require('config')
+
 json = require('json')
 lfs = require('lfs')
 log = require('log')
