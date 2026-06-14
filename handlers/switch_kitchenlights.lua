@@ -1,4 +1,3 @@
-local socket = nil
 local strip_timer = 'kitchen_strip_timer'
 local strip_dim_timer = 'kitchen_strip_brightness_timer'
 
@@ -25,9 +24,6 @@ local function timer_dim()
 end
 
 return {
-	on_init = function()
-		socket = require('socket')
-	end,
 	topic = "zigbee2mqtt/kitchen/switch/+",
 	pattern = "zigbee2mqtt/kitchen/switch/(.+)",
 	on_match = function(payload, switch_name)

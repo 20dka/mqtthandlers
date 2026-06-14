@@ -1,7 +1,5 @@
 local M = {}
 
-local socket = require('socket') -- for .gettime()
-
 local events = {}
 
 function M.add(name, timeout, poll, on_expire, data)

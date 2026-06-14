@@ -4,6 +4,7 @@ local consoleTagError = {"[\27[101;93m", "\27[0m]"}
 json = require('json')
 lfs = require('lfs')
 log = require('log')
+socket = require('socket')
 
 do -- turn arguments into hashmap
 	_G.arg = _G.arg or {}

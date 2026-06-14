@@ -1,7 +1,5 @@
 local M = {}
 
-local socket = require('socket') -- for .gettime()
-
 local routines = {}
 
 function M.register(fn, name, ...)
