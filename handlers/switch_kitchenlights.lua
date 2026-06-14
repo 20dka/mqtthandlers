@@ -32,6 +32,7 @@ return {
 	pattern = "zigbee2mqtt/kitchen/switch/(.+)",
 	on_match = function(payload, switch_name)
 		local action = json.decode(payload).action
+		if not action then log('w', 'what the heck ' .. switch_name) return end
 		local brightness_dir = string.match(action, "brightness_move_(%a+)")
 
 		if action == 'on' then
